@@ -1,0 +1,14 @@
+# 민감 정보 (절대 깃허브에 올리면 안 됨)
+.env
+backend/.env
+serviceAccountKey.json
+backend/serviceAccountKey*.json
+
+# 파이썬
+__pycache__/
+*.pyc
+venv/
+backend/venv/
+
+# 기타
+.DS_Store

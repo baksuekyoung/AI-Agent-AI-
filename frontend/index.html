@@ -2,56 +2,149 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>도서관 AI 비서 & 데이터 관리</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Library Assistant</title>
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 20px; background: #f4f6f9; display: flex; gap: 20px; }
-        .pane { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; }
-        h2 { color: #333; font-size: 1.2rem; border-bottom: 2px solid #007bff; padding-bottom: 5px; }
-        input, button { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
-        button { background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .chat-box { height: 300px; border: 1px solid #ddd; border-radius: 4px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #fafafa; }
-        .msg { margin-bottom: 8px; padding: 6px 10px; border-radius: 4px; font-size: 0.9rem; }
-        .user { background: #e3f2fd; text-align: right; }
-        .ai { background: #e8f5e9; }
-        .summary-card { background: #e2e8f0; padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
-        th { background: #f1f5f9; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f4f6f9; display: flex; height: 100vh; }
+        .sidebar { width: 300px; background: #2c3e50; color: white; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
+        .main-content { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow: hidden; }
+        h2, h3 { font-size: 1.1rem; margin-top: 0; border-bottom: 1px solid #4e657d; padding-bottom: 8px; }
+        .section { margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; }
+        input, button { width: 100%; padding: 8px; margin: 5px 0; border-radius: 4px; border: none; box-sizing: border-box; }
+        button { background: #3498db; color: white; cursor: pointer; font-weight: bold; }
+        button:hover { background: #2980b9; }
+        .chat-container { flex: 1; background: white; border-radius: 8px; display: flex; flex-direction: column; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; }
+        .chat-messages { flex: 1; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        .message { margin-bottom: 10px; padding: 8px 12px; border-radius: 6px; max-width: 75%; line-height: 1.4; }
+        .user { background: #dcf8c6; margin-left: auto; text-align: right; }
+        .assistant { background: #f1f0f0; margin-right: auto; }
+        .chat-input-area { display: flex; gap: 10px; }
+        .chat-input-area input { margin: 0; }
+        .chat-input-area button { width: 80px; margin: 0; }
     </style>
 </head>
 <body>
 
-    <!-- 왼쪽: AI 채팅 & 데이터 요약 -->
-    <div class="pane">
-        <h2>🤖 도서관 AI 비서</h2>
-        <div id="summaryCard" class="summary-card">데이터 요약 로딩 중...</div>
+    <div class="sidebar">
+        <h2>📚 도서관 AI 비서</h2>
         
-        <div id="chatBox" class="chat-box"></div>
-        <input type="text" id="userInput" placeholder="질문을 입력하세요 (예: 이번 달 방문객 어때?)">
-        <button onclick="sendMessage()">전송</button>
-    </div>
-
-    <!-- 오른쪽: 데이터 관리 (CRUD) -->
-    <div class="pane">
-        <h2>📊 데이터 관리 (CRUD)</h2>
-        <div>
-            <input type="date" id="inputDate">
-            <input type="number" id="inputVisitors" placeholder="방문객 수">
-            <input type="number" id="inputCheckouts" placeholder="대출 건수">
-            <input type="text" id="inputMemo" placeholder="메모">
-            <button onclick="addData()">데이터 추가</button>
+        <div class="section">
+            <h3>📊 데이터 요약</h3>
+            <div id="summary-box">로딩 중...</div>
+            <button onclick="loadSummary()">요약 새로고침</button>
         </div>
-        <div style="max-height: 250px; overflow-y: auto;">
-            <table id="dataTable">
-                <thead>
-                    <tr><th>날짜</th><th>방문객</th><th>대출</th><th>관리</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+
+        <div class="section">
+            <h3>➕ 데이터 추가 (CRUD)</h3>
+            <input type="date" id="data-date">
+            <input type="number" id="data-value" placeholder="값 (예: 대출 수)">
+            <input type="text" id="data-memo" placeholder="메모 (예: 주말 행사)">
+            <button onclick="addData()">데이터 저장</button>
+        </div>
+
+        <div class="section">
+            <h3>💬 대화 기록</h3>
+            <button onclick="loadConversations()">목록 불러오기</button>
+            <div id="conv-list" style="margin-top: 10px; max-height: 150px; overflow-y: auto; font-size: 0.9rem;"></div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <div class="main-content">
+        <div class="chat-container">
+            <h3>🤖 AI 맞춤형 대화</h3>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message assistant">안녕하세요! 도서관 데이터 분석 비서입니다. 무엇을 도와드릴까요?</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="user-input" placeholder="질문을 입력하세요..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">전송</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // ⚠️ 본인의 렌더 백엔드 주소로 변경하세요!
+    const API_BASE_URL = "https://ai-agent-ai.onrender.com";
+
+    async function loadSummary() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/data/summary`);
+            const data = await res.json();
+            document.getElementById('summary-box').innerHTML = `
+                <small>기간: ${data.period || '-'}</small><br>
+                <small>총 개수: ${data.count || 0}건</small><br>
+                <small>평균: ${data.metrics?.average || 0}</small><br>
+                <small>트렌드: ${data.trend || '-'}</small>
+            `;
+        } catch (e) {
+            document.getElementById('summary-box').innerText = "요약 로드 실패";
+        }
+    }
+
+    async function addData() {
+        const date = document.getElementById('data-date').value;
+        const value = Number(document.getElementById('data-value').value);
+        const memo = document.getElementById('data-memo').value;
+        if (!date || !value) { alert("날짜와 값을 입력해주세요!"); return; }
+
+        const res = await fetch(`${API_BASE_URL}/api/data`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ date, value, memo })
+        });
+        if (res.ok) {
+            alert("데이터가 성공적으로 추가되었습니다!");
+            loadSummary();
+        } else {
+            alert("추가 실패");
+        }
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('user-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        appendMessage(text, 'user');
+        input.value = '';
+
+        const msgBox = document.getElementById('chat-messages');
+        const loadingId = 'loading-' + Date.now();
+        msgBox.innerHTML += `<div class="message assistant" id="${loadingId}">AI가 답변을 생성 중입니다...</div>`;
+        msgBox.scrollTop = msgBox.scrollHeight;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+            const data = await res.json();
+            document.getElementById(loadingId).remove();
+            appendMessage(data.reply || data.response || "답변을 받지 못했습니다.", 'assistant');
+        } catch (e) {
+            document.getElementById(loadingId).remove();
+            appendMessage("서버 통신 오류가 발생했습니다.", 'assistant');
+        }
+    }
+
+    function appendMessage(text, sender) {
+        const msgBox = document.getElementById('chat-messages');
+        msgBox.innerHTML += `<div class="message ${sender}">${text}</div>`;
+        msgBox.scrollTop = msgBox.scrollHeight;
+    }
+
+    async function loadConversations() {
+        const res = await fetch(`${API_BASE_URL}/api/conversations`);
+        const list = await res.json();
+        const box = document.getElementById('conv-list');
+        box.innerHTML = '';
+        list.forEach(c => {
+            box.innerHTML += `<div style="padding: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor:pointer;" onclick="alert('대화 ID: ${c.id}')">${c.id.substring(0,8)}...</div>`;
+        });
+    }
+
+    loadSummary();
+</script>
 </body>
 </html>

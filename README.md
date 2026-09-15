@@ -12,7 +12,7 @@
 - **Deployment**: Render (Backend), Vercel (Frontend)
 
 ## 🌐 배포 링크
-- **프론트엔드 서비스 URL (Vercel)**: [여기에 Vercel 주소 입력]
+- **프론트엔드 서비스 URL (Vercel)**: https://ai-agent-ai.vercel.app
 - **백엔드 API 서버 URL (Render)**: https://ai-agent-ai.onrender.com
 - **Swagger UI 문서**: https://ai-agent-ai.onrender.com/docs
 

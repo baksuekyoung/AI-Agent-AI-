@@ -1,24 +1,47 @@
-# 📚 AI Library Assistant (도서관 AI 비서 서비스)
+# 📚 AI Library Assistant (AI 도서관 어시스턴트)
 
-사용자의 시계열 데이터(도서관 이용 통계 등)를 분석 및 요약하여, 맞춤형 답변을 제공하는 Full-Stack AI 웹 서비스입니다.
+작은도서관 및 교육 현장의 효율적인 운영을 지원하기 위한 **AI 기반 데이터 관리 및 챗봇 어시스턴트 웹 서비스**입니다.
 
-## 🚀 서비스 소개
-- 일반적인 ChatGPT와 달리, Firestore에 저장된 실제 도서관 운영 데이터를 시스템 프롬프트에 동적 컨텍스트로 주입하여 정밀하고 구체적인 답변을 제공합니다.
-- 데이터 관리(CRUD)와 대화 기록 저장 기능을 지원합니다.
+---
 
-## 🛠 기술 스택
-- **Backend**: FastAPI, Python, Firebase Firestore, OpenAI API
-- **Frontend**: Vanilla HTML / CSS / JavaScript
-- **Deployment**: Render (Backend), Vercel (Frontend)
+## 🛠️ Tech Stack
 
-## 🌐 배포 링크
-- **프론트엔드 서비스 URL (Vercel)**: https://ai-agent-ai.vercel.app
-- **백엔드 API 서버 URL (Render)**: https://ai-agent-ai.onrender.com
-- **Swagger UI 문서**: https://ai-agent-ai.onrender.com/docs
+### Frontend
+* HTML5, JavaScript (Vanilla JS)
+* **Deployment:** Vercel ([Live Link](https://ai-agent-ai.vercel.app))
 
-## 💻 로컬 실행 방법
-1. 백엔드 실행:
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   uvicorn main:app --reload
+### Backend
+* Python, FastAPI, Pydantic
+* **Deployment:** Render ([API Docs](https://ai-agent-ai.onrender.com/docs))
+* **Database:** Firebase Firestore
+
+---
+
+## ✨ Key Features
+
+1. **도서관 데이터 관리 (CRUD)**
+   * 운영 데이터(날짜, 값, 메모) 실시간 등록, 조회 및 관리
+   * 프론트엔드와 백엔드 간 Pydantic 모델 검증을 통한 안정적인 데이터 통신 (`/api/data`)
+2. **AI 도서관 어시스턴트 및 요약**
+   * 등록된 데이터를 기반으로 한 AI 요약 및 트렌드 분석 기능
+   * 실시간 질의응답이 가능한 AI 챗봇 인터페이스
+
+---
+
+## 🚀 Deployment Architecture
+
+* **Frontend:** Vercel을 통해 정적 웹 파일 배포
+* **Backend:** Render를 통해 FastAPI 서버 호스팅 및 자동 배포 연동 (`git push` 연동)
+
+---
+
+## 📁 Project Structure
+
+```text
+ai-library-assistant/
+├── backend/
+│   ├── main.py         # FastAPI 서버 메인 로직 및 데이터 모델 (DataItem)
+│   ├── requirements.txt # Python 패키지 의존성 파일
+│   └── .env            # 환경 변수 (Firebase, OpenAI API 등)
+├── index.html          # 프론트엔드 메인 페이지
+└── script.js           # API 통신 및 UI 인터랙션 로직

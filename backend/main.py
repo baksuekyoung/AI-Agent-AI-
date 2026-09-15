@@ -67,9 +67,8 @@ app.add_middleware(
 # --- Pydantic 모델 정의 ---
 class DataItem(BaseModel):
     date: str
-    visitors: int
-    checkouts: int
-    memo: Optional[str] = ""
+    value: int
+    memo: Optional[str] = None
 
 class ChatRequest(BaseModel):
     message: str
